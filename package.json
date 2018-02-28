@@ -1,0 +1,47 @@
+{
+  "name": "can-attribute-observable",
+  "version": "0.0.0",
+  "description": "Create observables from HTML attributes.",
+  "main": "can-attribute-observable",
+  "scripts": {
+    "preversion": "npm test",
+    "postpublish": "git push --tags && git push",
+    "testee": "testee test/test.html --browsers firefox",
+    "test": "npm run detect-cycle && npm run jshint && npm run testee",
+    "jshint": "jshint ./*.js test/*.js --config",
+    "release:pre": "npm version prerelease && npm publish --tag pre",
+    "release:patch": "npm version patch && npm publish",
+    "release:minor": "npm version minor && npm publish",
+    "release:major": "npm version major && npm publish",
+    "detect-cycle": "detect-cyclic-packages"
+  },
+  "keywords": [],
+  "author": {
+    "name": "Bitovi",
+    "email": "contact@bitovi.com",
+    "url": "http://bitovi.com"
+  },
+  "devDependencies": {
+    "can-vdom": "^4.0.1",
+    "detect-cyclic-packages": "^1.1.1",
+    "jshint": "^2.9.5",
+    "steal": "^1.6.5",
+    "steal-qunit": "^1.0.1",
+    "testee": "^0.7.0"
+  },
+  "dependencies": {
+    "can-dom-data-state": "^1.0.1",
+    "can-dom-events": "^1.1.2",
+    "can-dom-mutate": "^1.0.3",
+    "can-event-dom-radiochange": "^2.1.0",
+    "can-globals": "^1.0.1",
+    "can-observation": "^4.0.1",
+    "can-observation-recorder": "^1.0.2",
+    "can-queues": "^1.0.1",
+    "can-reflect": "^1.13.3",
+    "can-reflect-dependencies": "^1.0.1",
+    "can-simple-observable": "^2.0.2",
+    "can-types": "^1.1.6",
+    "can-util": "^3.11.4"
+  }
+}
