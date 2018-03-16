@@ -40,7 +40,7 @@
     "can-queues": "^1.0.1",
     "can-reflect": "^1.13.3",
     "can-reflect-dependencies": "^1.0.1",
-    "can-simple-observable": "^2.0.2",
+    "can-simple-observable": "^2.0.4",
     "can-types": "^1.1.6",
     "can-util": "^3.11.4"
   }
