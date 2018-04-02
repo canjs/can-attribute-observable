@@ -64,9 +64,7 @@ testHelpers.makeTests("AttributeObservable", function(
 		domEvents.dispatch(input, "change");
 	});
 
-
 	testIfRealDocument("able to read normal attributes", function(assert) {
-
 		var div = document.createElement("div");
 		div.setAttribute("foo","bar");
 
@@ -76,5 +74,22 @@ testHelpers.makeTests("AttributeObservable", function(
 		var obs = new AttributeObservable(div, "foo", {});
 
 		assert.equal(canReflect.getValue(obs), "bar", "correct default value");
+	});
+
+	testIfRealDocument("able to read and write properties when they exist on the element and are not in 'special' list", function(assert) {
+		var video = document.createElement("video");
+		video.currentTime = 5.0;
+
+		var ta = this.fixture;
+		ta.appendChild(video);
+
+		var obs = new AttributeObservable(video, "currentTime", {});
+
+		assert.equal(canReflect.getValue(obs), 5.0, "correct default value");
+
+		canReflect.setValue(obs, 10.0);
+
+		assert.equal(canReflect.getValue(obs), 10.0, "correct updated value");
+		assert.equal(video.currentTime, 10.0, "correct updated property");
 	});
 });
