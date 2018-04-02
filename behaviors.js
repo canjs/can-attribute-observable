@@ -419,11 +419,13 @@ var attr = {
 		return specialAttributes[attributeName] && specialAttributes[attributeName].addEventListener;
 	},
 
-	setAttrOrProp: function(el, attrName, val){
-		attrName = attrName.toLowerCase();
+	setAttrOrProp: function(el, caseSensitiveAttrName, val){
+		var attrName = caseSensitiveAttrName.toLowerCase();
 		var special = specialAttributes[attrName];
 		if(special && special.isBoolean && !val) {
 			this.remove(el, attrName);
+		} else if (!special && caseSensitiveAttrName in el) {
+			el[caseSensitiveAttrName] = val;
 		} else {
 			this.set(el, attrName, val);
 		}
@@ -454,15 +456,20 @@ var attr = {
 		}
 	},
 	// ## attr.get
-	// Gets the value of an attribute. First checks if the property is an `specialAttributes` and if so calls the special getter. Otherwise uses `getAttribute` to retrieve the value.
-	get: function (el, attrName) {
-		attrName = attrName.toLowerCase();
+	// Gets the value of an attribute or property.
+	// First checks if the property is an `specialAttributes` and if so calls the special getter.
+	// Then checks if the attribute or property is a property on the element.
+	// Otherwise uses `getAttribute` to retrieve the value.
+	get: function (el, caseSensitiveAttrName) {
+		var attrName = caseSensitiveAttrName.toLowerCase();
 		var special = specialAttributes[attrName];
 		var getter = special && special.get;
 		var test = getSpecialTest(special);
 
 		if(typeof getter === "function" && test.call(el)) {
 			return getter.call(el);
+		} else if (caseSensitiveAttrName in el) {
+			return el[caseSensitiveAttrName];
 		} else {
 			return el.getAttribute(attrName);
 		}
