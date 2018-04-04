@@ -487,30 +487,30 @@ var attr = {
 
 		// if the element doesn't have a property of this name, it must be an attribute
 		if (!(attrOrPropName in el)) {
-			return this.attribute(el, attrOrPropName);
+			return this.attribute(attrOrPropName);
 		}
 
 		// if there is a property, check if it is writable
 		var newRule = isPropWritable(el, attrOrPropName) ?
-			this.property(el, attrOrPropName) :
-			this.attribute(el, attrOrPropName);
+			this.property(attrOrPropName) :
+			this.attribute(attrOrPropName);
 
 		// cache the new rule and return it
 		return cacheRule(el, attrOrPropName, newRule);
 	},
 
-	attribute: function(el, attrName) {
+	attribute: function(attrName) {
 		return {
 			get: function() {
-				return el.getAttribute(attrName);
+				return this.getAttribute(attrName);
 			},
 			set: function(val) {
-				domMutateNode.setAttribute.call(el, attrName, val);
+				domMutateNode.setAttribute.call(this, attrName, val);
 			}
 		};
 	},
 
-	property: function(el, propName) {
+	property: function(propName) {
 		return {
 			get: function() {
 				return this[propName];

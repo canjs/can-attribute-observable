@@ -44,11 +44,11 @@ testHelpers.makeTests("AttributeObservable - behaviors", function(
 		}, {
 			el: video,
 			attrOrPropName: "currentTime",
-			expectedRule: behaviors.property(video, "currentTime")
+			expectedRule: behaviors.property("currentTime")
 		}, {
 			el: circle,
 			attrOrPropName: "r",
-			expectedRule: behaviors.attribute(circle, "r")
+			expectedRule: behaviors.attribute("r")
 		}].forEach(function(testCase) {
 			assert.equal(
 				behaviors.getRule(testCase.el, testCase.attrOrPropName),
