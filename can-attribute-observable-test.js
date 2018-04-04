@@ -126,4 +126,21 @@ testHelpers.makeTests("AttributeObservable", function(
 		assert.equal(canReflect.getValue(obsOne), "http://img.one/", "obsOne correct updated value");
 		assert.equal(canReflect.getValue(obsTwo), "http://img.two/", "obsTwo correct updated value");
 	});
+
+	testIfRealDocument("can correctly set the same attribute on two different elements of the same type", function(assert) {
+		var circleOne = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+		var obsOne = new AttributeObservable(circleOne, "r", {});
+
+		var circleTwo = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+		var obsTwo = new AttributeObservable(circleTwo, "r", {});
+
+		assert.equal(canReflect.getValue(obsOne), null, "obsOne correct default value");
+		assert.equal(canReflect.getValue(obsTwo), null, "obsTwo correct default value");
+
+		canReflect.setValue(obsOne, 10);
+		canReflect.setValue(obsTwo, 20);
+
+		assert.equal(canReflect.getValue(obsOne), 10, "obsOne correct updated value");
+		assert.equal(canReflect.getValue(obsTwo), 20, "obsTwo correct updated value");
+	});
 });
