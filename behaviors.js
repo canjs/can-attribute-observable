@@ -526,36 +526,16 @@ var attr = {
 	},
 
 	setAttrOrProp: function(el, attrName, val){
+		return this.set(el, attrName, val);
+	},
+	// ## attr.set
+	// Set the value an attribute on an element.
+	set: function (el, attrName, val) {
 		var rule = this.getRule(el, attrName);
 		var setter = rule && rule.set;
 
 		if (setter) {
 			return setter.call(el, val);
-		}
-	},
-	// ## attr.set
-	// Set the value an attribute on an element.
-	set: function (el, attrName, val) {
-		attrName = attrName.toLowerCase();
-		var special = specialAttributes[attrName];
-		var setter = special && special.set;
-		var test = getSpecialTest(special);
-
-		// First check if this is a special attribute with a setter.
-		// Then run the special's test function to make sure we should
-		// call its setter, and if so use the setter.
-		// Otherwise fallback to setAttribute.
-		if(typeof setter === "function" && test.call(el)) {
-			// To distinguish calls with explicit undefined, e.g.:
-			// - `attr.set(el, "checked")`
-			// - `attr.set(el, "checked", undefined)`
-			if (arguments.length === 2){
-				setter.call(el);
-			} else {
-				setter.call(el, val);
-			}
-		} else {
-			domMutateNode.setAttribute.call(el, attrName, val);
 		}
 	},
 	// ## attr.get
