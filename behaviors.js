@@ -143,6 +143,41 @@ var formElements = {"INPUT": true, "TEXTAREA": true, "SELECT": true},
 			setData.clean.call(select, "attrSetChildOptions");
 			rEL.call(select, "change", handler);
 		};
+	},
+	// cache of rules already calculated by `attr.getRule`
+	behaviorRules = new Map([]),
+	// # isPropWritable
+	// check if a property is writable on an element by finding its property descriptor
+	// on the element or its prototype chain
+	isPropWritable = function(el, prop) {
+		   var desc = Object.getOwnPropertyDescriptor(el.constructor.prototype, prop);
+
+		   if (desc) {
+				   return desc.writable || desc.set;
+		   } else {
+				   var proto = Object.getPrototypeOf(el);
+				   if (proto) {
+						   return isPropWritable(proto, prop);
+				   }
+		   }
+
+		   return false;
+	},
+	// # cacheRule
+	// add a rule to the rules Map so it does not need to be calculated more than once
+	cacheRule = function(el, attrOrPropName, rule) {
+		   var rulesForElementType;
+
+		   rulesForElementType = behaviorRules.get(el.prototype);
+
+		   if (!rulesForElementType) {
+				   rulesForElementType = {};
+				   behaviorRules.set(el.constructor, rulesForElementType);
+		   }
+
+		   rulesForElementType[attrOrPropName] = rule;
+
+		   return rule;
 	};
 
 var specialAttributes = {
@@ -415,44 +450,92 @@ var specialAttributes = {
 };
 
 var attr = {
+	// cached rules (stored on `attr` for testing purposes)
+	rules: behaviorRules,
+
+	// special attribute behaviors (stored on `attr` for testing purposes)
+	specialAttributes: specialAttributes,
+
+	// # attr.getRule
+	//
+	// get the behavior rule for an attribute or property on an element
+	//
+	// Rule precendence:
+	//   1. "special" behaviors - use the special behavior getter/setter
+	//   2. writable properties - read and write as a property
+	//   3. all others - read and write as an attribute
+	//
+	// Once rule is determined it will be cached for all elements of the same type
+	// so that it does not need to be calculated again
+	getRule: function(el, attrOrPropName) {
+		var special = specialAttributes[attrOrPropName];
+		// always use "special" if available
+		// these are not cached since they would have to be cached separately
+		// for each element type and it is faster to just look up in the
+		// specialAttributes object
+		if (special) {
+			return special;
+		}
+
+		// next use rules cached in a previous call to getRule
+		var rulesForElementType = behaviorRules.get(el.constructor);
+		var cached = rulesForElementType && rulesForElementType[attrOrPropName];
+
+		if (cached) {
+			return cached;
+		}
+
+		// if the element doesn't have a property of this name, it must be an attribute
+		if (!(attrOrPropName in el)) {
+			return this.attribute(el, attrOrPropName);
+		}
+
+		// if there is a property, check if it is writable
+		var newRule = isPropWritable(el, attrOrPropName) ?
+			this.property(el, attrOrPropName) :
+			this.attribute(el, attrOrPropName);
+
+		// cache the new rule and return it
+		return cacheRule(el, attrOrPropName, newRule);
+	},
+
+	attribute: function(el, attrName) {
+		return {
+			get: function() {
+				return el.getAttribute(attrName);
+			},
+			set: function(val) {
+				domMutateNode.setAttribute.call(el, attrName, val);
+			}
+		};
+	},
+
+	property: function(el, propName) {
+		return {
+			get: function() {
+				return this[propName];
+			},
+			set: function(val) {
+				this[propName] = val;
+			}
+		};
+	},
+
 	findSpecialListener: function(attributeName) {
 		return specialAttributes[attributeName] && specialAttributes[attributeName].addEventListener;
 	},
 
-	setAttrOrProp: function(el, caseSensitiveAttrName, val){
-		var attrName = caseSensitiveAttrName.toLowerCase();
-		var special = specialAttributes[attrName];
-		if(special && special.isBoolean && !val) {
-			this.remove(el, attrName);
-		} else if (!special && caseSensitiveAttrName in el) {
-			el[caseSensitiveAttrName] = val;
-		} else {
-			this.set(el, attrName, val);
-		}
+	setAttrOrProp: function(el, attrName, val){
+		return this.set(el, attrName, val);
 	},
 	// ## attr.set
 	// Set the value an attribute on an element.
 	set: function (el, attrName, val) {
-		attrName = attrName.toLowerCase();
-		var special = specialAttributes[attrName];
-		var setter = special && special.set;
-		var test = getSpecialTest(special);
+		var rule = this.getRule(el, attrName);
+		var setter = rule && rule.set;
 
-		// First check if this is a special attribute with a setter.
-		// Then run the special's test function to make sure we should
-		// call its setter, and if so use the setter.
-		// Otherwise fallback to setAttribute.
-		if(typeof setter === "function" && test.call(el)) {
-			// To distinguish calls with explicit undefined, e.g.:
-			// - `attr.set(el, "checked")`
-			// - `attr.set(el, "checked", undefined)`
-			if (arguments.length === 2){
-				setter.call(el);
-			} else {
-				setter.call(el, val);
-			}
-		} else {
-			domMutateNode.setAttribute.call(el, attrName, val);
+		if (setter) {
+			return setter.call(el, val);
 		}
 	},
 	// ## attr.get
@@ -460,18 +543,14 @@ var attr = {
 	// First checks if the property is an `specialAttributes` and if so calls the special getter.
 	// Then checks if the attribute or property is a property on the element.
 	// Otherwise uses `getAttribute` to retrieve the value.
-	get: function (el, caseSensitiveAttrName) {
-		var attrName = caseSensitiveAttrName.toLowerCase();
-		var special = specialAttributes[attrName];
-		var getter = special && special.get;
-		var test = getSpecialTest(special);
+	get: function (el, attrName) {
+		var rule = this.getRule(el, attrName);
+		var getter = rule && rule.get;
 
-		if(typeof getter === "function" && test.call(el)) {
-			return getter.call(el);
-		} else if (caseSensitiveAttrName in el) {
-			return el[caseSensitiveAttrName];
-		} else {
-			return el.getAttribute(attrName);
+		if (getter) {
+			return rule.test ?
+				rule.test.call(el) && getter.call(el) :
+				getter.call(el);
 		}
 	},
 	// ## attr.remove

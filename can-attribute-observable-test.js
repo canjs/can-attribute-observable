@@ -92,4 +92,38 @@ testHelpers.makeTests("AttributeObservable", function(
 		assert.equal(canReflect.getValue(obs), 10.0, "correct updated value");
 		assert.equal(video.currentTime, 10.0, "correct updated property");
 	});
+
+	testIfRealDocument("should use attribute instead of non-writable properties", function(assert) {
+		var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+		circle.setAttribute("r", 50);
+
+		var ta = this.fixture;
+		ta.appendChild(circle);
+
+		var obs = new AttributeObservable(circle, "r", {});
+
+		assert.equal(canReflect.getValue(obs), 50, "correct default value");
+
+		canReflect.setValue(obs, 10);
+
+		assert.equal(canReflect.getValue(obs), 10, "correct updated value");
+		assert.equal(circle.getAttribute("r"), 10, "correct updated attribute");
+	});
+
+	testIfRealDocument("can correctly set the same property on two different elements of the same type", function(assert) {
+		var imgOne = document.createElement("img");
+		var obsOne = new AttributeObservable(imgOne, "src", {});
+
+		var imgTwo = document.createElement("img");
+		var obsTwo = new AttributeObservable(imgTwo, "src", {});
+
+		assert.equal(canReflect.getValue(obsOne), "", "obsOne correct default value");
+		assert.equal(canReflect.getValue(obsTwo), "", "obsTwo correct default value");
+
+		canReflect.setValue(obsOne, "http://img.one/");
+		canReflect.setValue(obsTwo, "http://img.two/");
+
+		assert.equal(canReflect.getValue(obsOne), "http://img.one/", "obsOne correct updated value");
+		assert.equal(canReflect.getValue(obsTwo), "http://img.two/", "obsTwo correct updated value");
+	});
 });
