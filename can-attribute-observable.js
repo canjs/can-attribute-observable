@@ -79,7 +79,7 @@ Object.assign(AttributeObservable.prototype, {
 	},
 
 	set: function set(newVal) {
-		attr.setAttrOrProp(this.el, this.prop, newVal);
+		attr.set(this.el, this.prop, newVal);
 
 		// update the observation internal value
 		this.value = newVal;

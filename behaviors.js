@@ -525,9 +525,6 @@ var attr = {
 		return specialAttributes[attributeName] && specialAttributes[attributeName].addEventListener;
 	},
 
-	setAttrOrProp: function(el, attrName, val){
-		return this.set(el, attrName, val);
-	},
 	// ## attr.set
 	// Set the value an attribute on an element.
 	set: function (el, attrName, val) {
