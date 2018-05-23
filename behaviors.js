@@ -7,9 +7,8 @@ var domEvents = require("can-dom-events");
 var domMutate = require("can-dom-mutate");
 var domMutateNode = require("can-dom-mutate/node");
 var getMutationObserver = require("can-globals/mutation-observer/mutation-observer");
-var each = require("can-util/js/each/each");
 var types = require("can-types");
-var diff = require("can-util/js/diff/diff");
+var diff = require("can-diff/list/list");
 
 var formElements = {"INPUT": true, "TEXTAREA": true, "SELECT": true},
 	// Used to convert values to strings.
@@ -274,7 +273,7 @@ var specialAttributes = {
 		addEventListener: function(eventName, handler, aEL){
 			var handlers = [];
 			var el = this;
-			each(["change", "blur"], function(eventName){
+			["change", "blur"].forEach(function(eventName){
 				var localHandler = function(){
 					handler.apply(this, arguments);
 				};
@@ -283,7 +282,7 @@ var specialAttributes = {
 			});
 
 			return function(rEL){
-				each(handlers, function(info){
+				handlers.forEach( function(info){
 					rEL.call(el, info[0], info[1]);
 				});
 			};
