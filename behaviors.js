@@ -7,7 +7,6 @@ var domEvents = require("can-dom-events");
 var domMutate = require("can-dom-mutate");
 var domMutateNode = require("can-dom-mutate/node");
 var getMutationObserver = require("can-globals/mutation-observer/mutation-observer");
-var types = require("can-types");
 var diff = require("can-diff/list/list");
 
 var formElements = {"INPUT": true, "TEXTAREA": true, "SELECT": true},
@@ -245,11 +244,8 @@ var specialAttributes = {
 						focusTask();
 					});
 				} else {
-					types.queueTask([
-						focusTask,
-						this,
-						[]
-					]);
+					// THIS MIGHT NEED TO BE PUT IN THE MUTATE QUEUE
+					focusTask();
 				}
 			}
 			return !!val;
