@@ -87,7 +87,7 @@ Object.assign(AttributeObservable.prototype, {
 		return newVal;
 	},
 
-	handler: function handler(newVal) {
+	handler: function handler(newVal, event) {
 		var old = this.value;
 		this.value = attr.get(this.el, this.prop);
 
@@ -102,10 +102,12 @@ Object.assign(AttributeObservable.prototype, {
 			queues.enqueueByQueue(
 				this.handlers.getNode([]),
 				this,
-				[newVal, old],
-				function() {
-					return {};
-				}
+				[newVal, old]
+				//!steal-remove-start
+				/* jshint laxcomma: true */
+				,null, [this.el,this.prop,"changed to", newVal, "from", old, "by", event]
+				/* jshint laxcomma: false */
+				//!steal-remove-end
 			);
 		}
 	},
@@ -117,8 +119,8 @@ Object.assign(AttributeObservable.prototype, {
 
 		// make sure `this.handler` gets the new value instead of
 		// the event object passed to the event handler
-		observable._handler = function() {
-			observable.handler(attr.get(observable.el, observable.prop));
+		observable._handler = function(event) {
+			observable.handler(attr.get(observable.el, observable.prop), event);
 		};
 
 		if (observable.event === internalRadioChangeEventType) {
@@ -130,7 +132,7 @@ Object.assign(AttributeObservable.prototype, {
 			observable._specialDisposal = specialBinding.call(observable.el, observable.prop, observable._handler, canUtilAEL);
 		}
 
-		canEvent.on.call(observable.el, observable.event, observable._handler);		
+		canEvent.on.call(observable.el, observable.event, observable._handler);
 
 		// initial value
 		this.value = attr.get(this.el, this.prop);
@@ -150,7 +152,7 @@ Object.assign(AttributeObservable.prototype, {
 			observable._specialDisposal = null;
 		}
 
-		canEvent.off.call(observable.el, observable.event, observable._handler);	
+		canEvent.off.call(observable.el, observable.event, observable._handler);
 	},
 
 	valueHasDependencies: function valueHasDependencies() {
