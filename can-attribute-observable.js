@@ -91,6 +91,7 @@ Object.assign(AttributeObservable.prototype, {
 
 	handler: function handler(newVal, event) {
 		var old = this.value;
+		var queuesArgs = [];
 		this.value = attr.get(this.el, this.prop);
 
 		if (this.value !== old) {
@@ -101,22 +102,28 @@ Object.assign(AttributeObservable.prototype, {
 				}
 			}
 			//!steal-remove-end
-			var reasonLog = [];
+			
+
+			queuesArgs = [
+				this.handlers.getNode([]),
+  			this,
+  			[newVal, old]
+  		];
 			//!steal-remove-start
 			if(process.env.NODE_ENV !== 'production') {
-				reasonLog = [this.el,this.prop,"changed to", newVal, "from", old, "by", event];
+				queuesArgs = [
+					this.handlers.getNode([]),
+					this,
+					[newVal, old]
+					/* jshint laxcomma: true */
+					,null
+					,[this.el,this.prop,"changed to", newVal, "from", old, "by", event]
+					/* jshint laxcomma: false */
+				];
 			}
 			//!steal-remove-end
 			// adds callback handlers to be called w/i their respective queue.
-			queues.enqueueByQueue(
-				this.handlers.getNode([]),
-				this,
-				[newVal, old]
-				/* jshint laxcomma: true */
-				,null
-				,reasonLog
-				/* jshint laxcomma: false */
-			);
+			queues.enqueueByQueue.apply(queues, queuesArgs);
 		}
 	},
 
