@@ -1,3 +1,4 @@
+"use strict";
 var canReflect = require("can-reflect");
 var domEvents = require("can-dom-events");
 var isDomEventTarget = require("can-dom-events/helpers/util").isDomEventTarget;

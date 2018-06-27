@@ -1,3 +1,4 @@
+"use strict";
 var attr = require("./behaviors");
 
 var isRadioInput = function isRadioInput(el) {
