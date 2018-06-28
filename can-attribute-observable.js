@@ -46,20 +46,22 @@ function AttributeObservable(el, prop, bindingData, event) {
 	this.handler = this.handler.bind(this);
 
 	//!steal-remove-start
-	// register what changes the element's attribute
-	canReflectDeps.addMutatedBy(this.el, this.prop, this);
+	if(process.env.NODE_ENV !== 'production') {
+		// register what changes the element's attribute
+		canReflectDeps.addMutatedBy(this.el, this.prop, this);
 
-	canReflect.assignSymbols(this, {
-		"can.getName": function getName() {
-			return (
-				"AttributeObservable<" +
-				el.nodeName.toLowerCase() +
-				"." +
-				this.prop +
-				">"
-			);
-		}
-	});
+		canReflect.assignSymbols(this, {
+			"can.getName": function getName() {
+				return (
+					"AttributeObservable<" +
+					el.nodeName.toLowerCase() +
+					"." +
+					this.prop +
+					">"
+				);
+			}
+		});
+	}
 	//!steal-remove-end
 }
 
@@ -89,26 +91,39 @@ Object.assign(AttributeObservable.prototype, {
 
 	handler: function handler(newVal, event) {
 		var old = this.value;
+		var queuesArgs = [];
 		this.value = attr.get(this.el, this.prop);
 
 		if (this.value !== old) {
 			//!steal-remove-start
-			if (typeof this._log === "function") {
-				this._log(old, newVal);
+			if(process.env.NODE_ENV !== 'production') {
+				if (typeof this._log === "function") {
+					this._log(old, newVal);
+				}
 			}
 			//!steal-remove-end
+			
 
-			// adds callback handlers to be called w/i their respective queue.
-			queues.enqueueByQueue(
+			queuesArgs = [
 				this.handlers.getNode([]),
-				this,
-				[newVal, old]
-				//!steal-remove-start
-				/* jshint laxcomma: true */
-				,null, [this.el,this.prop,"changed to", newVal, "from", old, "by", event]
-				/* jshint laxcomma: false */
-				//!steal-remove-end
-			);
+  			this,
+  			[newVal, old]
+  		];
+			//!steal-remove-start
+			if(process.env.NODE_ENV !== 'production') {
+				queuesArgs = [
+					this.handlers.getNode([]),
+					this,
+					[newVal, old]
+					/* jshint laxcomma: true */
+					,null
+					,[this.el,this.prop,"changed to", newVal, "from", old, "by", event]
+					/* jshint laxcomma: false */
+				];
+			}
+			//!steal-remove-end
+			// adds callback handlers to be called w/i their respective queue.
+			queues.enqueueByQueue.apply(queues, queuesArgs);
 		}
 	},
 
