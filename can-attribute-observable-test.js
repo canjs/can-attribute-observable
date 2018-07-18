@@ -143,4 +143,30 @@ testHelpers.makeTests("AttributeObservable", function(
 		assert.equal(canReflect.getValue(obsOne), 10, "obsOne correct updated value");
 		assert.equal(canReflect.getValue(obsTwo), 20, "obsTwo correct updated value");
 	});
+
+	testIfRealDocument("can correctly set boolean attributes (#13)", function(assert) {
+		var button = document.createElement("button");
+
+		var ta = this.fixture;
+		ta.appendChild(button);
+
+		var obs = new AttributeObservable(button, "disabled", {});
+		assert.equal(button.disabled, false, "correct default value");
+
+		var testCases = [
+			{ input: "false", output: true },
+			{ input: true, output: true },
+			{ input: "true", output: true },
+			{ input: "", output: false },
+			{ input: false, output: false },
+			{ input: undefined, output: false },
+			{ input: null, output: false }
+		];
+
+		testCases.forEach(function(t) {
+			canReflect.setValue(obs, t.input);
+			assert.equal(button.disabled, t.output,
+				"disabled = " + (typeof t.input === "string" ? '"' + t.input + '"' : t.input) + " sets disabled to " + t.output);
+		});
+	});
 });
