@@ -43,7 +43,7 @@ var formElements = {"INPUT": true, "TEXTAREA": true, "SELECT": true},
 			isBoolean: true,
 			set: function(value){
 				if(prop in this) {
-					this[prop] = value !== false;
+					this[prop] = value;
 				} else {
 					domMutateNode.setAttribute.call(this, prop, "");
 				}
