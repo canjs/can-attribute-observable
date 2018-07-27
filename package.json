@@ -25,7 +25,7 @@
     "can-vdom": "^4.0.1",
     "detect-cyclic-packages": "^1.1.1",
     "jshint": "^2.9.5",
-    "steal": "^1.6.5",
+    "steal": "^2.0.2",
     "steal-qunit": "^1.0.1",
     "testee": "^0.8.0"
   },
