@@ -8,6 +8,7 @@ var domMutate = require("can-dom-mutate");
 var domMutateNode = require("can-dom-mutate/node");
 var getMutationObserver = require("can-globals/mutation-observer/mutation-observer");
 var diff = require("can-diff/list/list");
+var queues = require("can-queues");
 
 var formElements = {"INPUT": true, "TEXTAREA": true, "SELECT": true},
 	// Used to convert values to strings.
@@ -34,7 +35,6 @@ var formElements = {"INPUT": true, "TEXTAREA": true, "SELECT": true},
 			if(this[prop] !== value) {
 				this[prop] = value;
 			}
-			return value;
 		};
 		return obj;
 	},
@@ -193,8 +193,6 @@ var specialAttributes = {
 			if(notFalse && this.type === "radio") {
 				this.defaultChecked = true;
 			}
-
-			return val;
 		},
 		remove: function(){
 			this.checked = false;
@@ -218,7 +216,6 @@ var specialAttributes = {
 			} else {
 				this.className = val;
 			}
-			return val;
 		}
 	},
 	disabled: booleanProp("disabled"),
@@ -245,10 +242,12 @@ var specialAttributes = {
 					});
 				} else {
 					// THIS MIGHT NEED TO BE PUT IN THE MUTATE QUEUE
-					focusTask();
+					queues.enqueueByQueue({
+						mutate: [focusTask]
+					}, null, []);
 				}
 			}
-			return !!val;
+			return true;
 		},
 		addEventListener: function(eventName, handler, aEL){
 			aEL.call(this, "focus", handler);
@@ -293,7 +292,7 @@ var specialAttributes = {
 		set: function(val){
 			val = !!val;
 			setData.set.call(this, "lastSetValue", val);
-			return this.selected = val;
+			this.selected = val;
 		},
 		addEventListener: function(eventName, handler, aEL){
 			var option = this;
@@ -329,11 +328,11 @@ var specialAttributes = {
 			var el = global.document && getDocument().createElement("div");
 			if ( el && el.style && ("cssText" in el.style) ) {
 				return function (val) {
-					return this.style.cssText = (val || "");
+					this.style.cssText = (val || "");
 				};
 			} else {
 				return function (val) {
-					return domMutateNode.setAttribute.call(this, "style", val);
+					domMutateNode.setAttribute.call(this, "style", val);
 				};
 			}
 		})()
@@ -383,7 +382,6 @@ var specialAttributes = {
 					domEvents.dispatch(this, "change");
 				});
 			}
-			return value;
 		},
 		test: function(){
 			return formElements[this.nodeName];
@@ -425,8 +423,6 @@ var specialAttributes = {
 					domEvents.dispatch(this, "values");
 				}
 			});
-
-			return values;
 		},
 		addEventListener: function(eventName, handler, aEL){
 			var localHandler = function(){

@@ -82,15 +82,18 @@ Object.assign(AttributeObservable.prototype, {
 	},
 
 	set: function set(newVal) {
-		attr.setAttrOrProp(this.el, this.prop, newVal);
-
+		var setterDispatchedEvents = attr.setAttrOrProp(this.el, this.prop, newVal);
 		// update the observation internal value
-		this.value = newVal;
+		if(!setterDispatchedEvents) {
+			this.value = newVal;
+		}
+
 
 		return newVal;
 	},
 
 	handler: function handler(newVal, event) {
+		console.log("handler called", this.value, newVal);
 		var old = this.value;
 		var queuesArgs = [];
 		this.value = attr.get(this.el, this.prop);
@@ -103,7 +106,7 @@ Object.assign(AttributeObservable.prototype, {
 				}
 			}
 			//!steal-remove-end
-			
+
 
 			queuesArgs = [
 				this.handlers.getNode([]),

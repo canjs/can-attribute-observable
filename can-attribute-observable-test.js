@@ -169,4 +169,5 @@ testHelpers.makeTests("AttributeObservable", function(
 				"disabled = " + (typeof t.input === "string" ? '"' + t.input + '"' : t.input) + " sets disabled to " + t.output);
 		});
 	});
+
 });
