@@ -93,7 +93,6 @@ Object.assign(AttributeObservable.prototype, {
 	},
 
 	handler: function handler(newVal, event) {
-		console.log("handler called", this.value, newVal);
 		var old = this.value;
 		var queuesArgs = [];
 		this.value = attr.get(this.el, this.prop);
