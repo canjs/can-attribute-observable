@@ -85,7 +85,7 @@ Object.assign(AttributeObservable.prototype, {
 		var setterDispatchedEvents = attr.setAttrOrProp(this.el, this.prop, newVal);
 		// update the observation internal value
 		if(!setterDispatchedEvents) {
-			this.value = newVal;
+			this._value = newVal;
 		}
 
 
@@ -93,11 +93,11 @@ Object.assign(AttributeObservable.prototype, {
 	},
 
 	handler: function handler(newVal, event) {
-		var old = this.value;
+		var old = this._value;
 		var queuesArgs = [];
-		this.value = attr.get(this.el, this.prop);
+		this._value = attr.get(this.el, this.prop);
 
-		if (this.value !== old) {
+		if (this._value !== old) {
 			//!steal-remove-start
 			if(process.env.NODE_ENV !== 'production') {
 				if (typeof this._log === "function") {
@@ -153,7 +153,7 @@ Object.assign(AttributeObservable.prototype, {
 		canEvent.on.call(observable.el, observable.event, observable._handler);
 
 		// initial value
-		this.value = attr.get(this.el, this.prop);
+		this._value = attr.get(this.el, this.prop);
 	},
 
 	onUnbound: function onUnbound() {
