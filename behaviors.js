@@ -143,7 +143,7 @@ var formElements = {"INPUT": true, "TEXTAREA": true, "SELECT": true},
 		};
 	},
 	// cache of rules already calculated by `attr.getRule`
-	behaviorRules = new Map([]),
+	behaviorRules = new Map(),
 	// # isPropWritable
 	// check if a property is writable on an element by finding its property descriptor
 	// on the element or its prototype chain

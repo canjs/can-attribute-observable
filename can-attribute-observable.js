@@ -178,8 +178,12 @@ Object.assign(AttributeObservable.prototype, {
 	},
 
 	getValueDependencies: function getValueDependencies() {
+		var m = new Map();
+		var s = new Set();
+		s.add(this.prop);
+		m.set(this.el, s);
 		return {
-			keyDependencies: new Map([[this.el, new Set([this.prop])]])
+			keyDependencies: m
 		};
 	}
 });
