@@ -41,6 +41,6 @@
     "can-queues": "^1.0.1",
     "can-reflect": "^1.13.3",
     "can-reflect-dependencies": "^1.0.1",
-    "can-simple-observable": "^2.0.2"
+    "can-simple-observable": "^2.3.1"
   }
 }
