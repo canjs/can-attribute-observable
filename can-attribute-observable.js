@@ -78,7 +78,11 @@ Object.assign(AttributeObservable.prototype, {
 				Observation.temporarilyBind(this);
 			}
 		}
-		return attr.get(this.el, this.prop);
+		var value = attr.get(this.el, this.prop);
+		if (typeof value === 'function') {
+			value = value.bind(this.el);
+		}
+		return value;
 	},
 
 	set: function set(newVal) {

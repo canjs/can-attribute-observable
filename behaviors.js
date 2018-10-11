@@ -148,7 +148,7 @@ var formElements = {"INPUT": true, "TEXTAREA": true, "SELECT": true},
 	// check if a property is writable on an element by finding its property descriptor
 	// on the element or its prototype chain
 	isPropWritable = function(el, prop) {
-		   var desc = Object.getOwnPropertyDescriptor(el.constructor.prototype, prop);
+		   var desc = Object.getOwnPropertyDescriptor(el, prop);
 
 		   if (desc) {
 				   return desc.writable || desc.set;

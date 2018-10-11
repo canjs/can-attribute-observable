@@ -134,4 +134,18 @@ testHelpers.makeTests("AttributeObservable - behaviors", function(
 
 		QUnit.deepEqual(eventValues,[true], "became focused once");
 	});
+
+	testIfRealDocument("bindings for functions are not bound to the correct this (#493)", function(assert) {
+		var div = document.createElement("div");
+		div.myFunc = function () {
+			assert.equal(this, div);
+		};
+
+		var ta = this.fixture;
+		ta.appendChild(div);
+
+		var obs = new AttributeObservable(div, "myFunc");
+		var method = obs.get();
+		method();
+	});
 });
