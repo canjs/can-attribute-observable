@@ -78,19 +78,19 @@ testHelpers.makeTests("AttributeObservable", function(
 
 	testIfRealDocument("able to read and write properties when they exist on the element and are not in 'special' list", function(assert) {
 		var video = document.createElement("video");
-		video.currentTime = 5.0;
+		video.height = 5;
 
 		var ta = this.fixture;
 		ta.appendChild(video);
 
-		var obs = new AttributeObservable(video, "currentTime", {});
+		var obs = new AttributeObservable(video, "height", {});
 
 		assert.equal(canReflect.getValue(obs), 5.0, "correct default value");
 
 		canReflect.setValue(obs, 10.0);
 
 		assert.equal(canReflect.getValue(obs), 10.0, "correct updated value");
-		assert.equal(video.currentTime, 10.0, "correct updated property");
+		assert.equal(video.height, 10.0, "correct updated property");
 	});
 
 	testIfRealDocument("should use attribute instead of non-writable properties", function(assert) {

@@ -108,7 +108,7 @@ testHelpers.makeTests("AttributeObservable - behaviors", function(
 		var input = document.createElement("input");
 		var otherInput = document.createElement("input");
 
-		var ta = this.fixture;
+		var ta = document.body;
 		ta.appendChild(input);
 		ta.appendChild(otherInput);
 		otherInput.focus();
@@ -129,10 +129,8 @@ testHelpers.makeTests("AttributeObservable - behaviors", function(
 		});
 		canReflect.setValue(obs,true);
 		queues.batch.stop();
-
 		assert.equal(input, document.activeElement, "focused");
-
-		QUnit.deepEqual(eventValues,[true], "became focused once");
+		assert.deepEqual(eventValues,[true], "became focused once");
 	});
 
 	testIfRealDocument("bindings for functions are not bound to the correct this (#493)", function(assert) {

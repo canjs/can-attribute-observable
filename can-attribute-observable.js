@@ -8,6 +8,7 @@ var getEventName = require("./get-event-name");
 var canReflectDeps = require("can-reflect-dependencies");
 var ObservationRecorder = require("can-observation-recorder");
 var SettableObservable = require("can-simple-observable/settable/settable");
+var canAssign = require("can-assign");
 
 // We register a namespaced radiochange event with the global
 // event registry so it does not interfere with user-defined events.
@@ -68,7 +69,7 @@ function AttributeObservable(el, prop, bindingData, event) {
 
 AttributeObservable.prototype = Object.create(SettableObservable.prototype);
 
-Object.assign(AttributeObservable.prototype, {
+canAssign(AttributeObservable.prototype, {
 	constructor: AttributeObservable,
 
 	get: function get() {
