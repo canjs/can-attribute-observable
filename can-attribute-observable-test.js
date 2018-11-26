@@ -170,4 +170,15 @@ testHelpers.makeTests("AttributeObservable", function(
 		});
 	});
 
+	testIfRealDocument("can get value from button element", function(assert) {
+		var button = document.createElement("button");
+		// Set the initial value
+		button.value = "5";
+
+		var ta = this.fixture;
+		ta.appendChild(button);
+
+		var obs = new AttributeObservable(button, "value", {});
+		assert.equal(canReflect.getValue(obs), "5", "correct default value");
+	});
 });

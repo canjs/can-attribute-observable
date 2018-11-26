@@ -10,7 +10,7 @@ var getMutationObserver = require("can-globals/mutation-observer/mutation-observ
 var diff = require("can-diff/list/list");
 var queues = require("can-queues");
 
-var formElements = {"INPUT": true, "TEXTAREA": true, "SELECT": true},
+var formElements = {"INPUT": true, "TEXTAREA": true, "SELECT": true, "BUTTON": true},
 	// Used to convert values to strings.
 	toString = function(value){
 		if(value == null) {
