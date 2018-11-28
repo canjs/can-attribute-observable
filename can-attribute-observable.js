@@ -11,6 +11,11 @@ var SettableObservable = require("can-simple-observable/settable/settable");
 var canAssign = require("can-assign");
 var canSymbol = require("can-symbol");
 
+var onValueSymbol = canSymbol.for('can.onValue');
+var offValueSymbol = canSymbol.for('can.offValue');
+var onEmitSymbol = canSymbol.for('can.onEmit');
+var offEmitSymbol = canSymbol.for('can.offEmit');
+
 // We register a namespaced radiochange event with the global
 // event registry so it does not interfere with user-defined events.
 var domEvents = require("can-dom-events");
@@ -50,11 +55,11 @@ function AttributeObservable(el, prop, bindingData, event) {
 
 	// If we have an event
 	// remove onValue/offValue and add onEvent
-	if (event) {
-		this[canSymbol.for('can.onValue')] = null;
-		this[canSymbol.for('can.offValue')] = null;
-		this[canSymbol.for('can.onEmit')] = AttributeObservable.prototype.on;
-		this[canSymbol.for('can.offEmit')] = AttributeObservable.prototype.off;
+	if (event !== undefined) {
+		this[onValueSymbol] = null;
+		this[offValueSymbol] = null;
+		this[onEmitSymbol] = AttributeObservable.prototype.on;
+		this[offEmitSymbol] = AttributeObservable.prototype.off;
 	}
 
 
@@ -115,7 +120,7 @@ canAssign(AttributeObservable.prototype, {
 
 		// If we have an event then we want to enqueue on all changes
 		// otherwise only enquue when there are changes to the value
-		if (event || this._value !== old) {
+		if (event !== undefined || this._value !== old) {
 			//!steal-remove-start
 			if(process.env.NODE_ENV !== 'production') {
 				if (typeof this._log === "function") {
