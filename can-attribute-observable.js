@@ -9,6 +9,12 @@ var canReflectDeps = require("can-reflect-dependencies");
 var ObservationRecorder = require("can-observation-recorder");
 var SettableObservable = require("can-simple-observable/settable/settable");
 var canAssign = require("can-assign");
+var canSymbol = require("can-symbol");
+
+var onValueSymbol = canSymbol.for('can.onValue');
+var offValueSymbol = canSymbol.for('can.offValue');
+var onEmitSymbol = canSymbol.for('can.onEmit');
+var offEmitSymbol = canSymbol.for('can.offEmit');
 
 // We register a namespaced radiochange event with the global
 // event registry so it does not interfere with user-defined events.
@@ -46,6 +52,16 @@ function AttributeObservable(el, prop, bindingData, event) {
 	this.prop = isMultipleSelect(el, prop) ? "values" : prop;
 	this.event = event || getEventName(el, prop, bindingData);
 	this.handler = this.handler.bind(this);
+
+	// If we have an event
+	// remove onValue/offValue and add onEvent
+	if (event !== undefined) {
+		this[onValueSymbol] = null;
+		this[offValueSymbol] = null;
+		this[onEmitSymbol] = AttributeObservable.prototype.on;
+		this[offEmitSymbol] = AttributeObservable.prototype.off;
+	}
+
 
 	//!steal-remove-start
 	if(process.env.NODE_ENV !== 'production') {
@@ -102,7 +118,9 @@ canAssign(AttributeObservable.prototype, {
 		var queuesArgs = [];
 		this._value = attr.get(this.el, this.prop);
 
-		if (this._value !== old) {
+		// If we have an event then we want to enqueue on all changes
+		// otherwise only enquue when there are changes to the value
+		if (event !== undefined || this._value !== old) {
 			//!steal-remove-start
 			if(process.env.NODE_ENV !== 'production') {
 				if (typeof this._log === "function") {

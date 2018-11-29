@@ -2,6 +2,7 @@ var canReflect = require("can-reflect");
 var testHelpers = require("../test/helpers");
 var domEvents = require("can-dom-events");
 var AttributeObservable = require("can-attribute-observable");
+var canSymbol = require("can-symbol");
 
 testHelpers.makeTests("AttributeObservable", function(
 	name,
@@ -180,5 +181,26 @@ testHelpers.makeTests("AttributeObservable", function(
 
 		var obs = new AttributeObservable(button, "value", {});
 		assert.equal(canReflect.getValue(obs), "5", "correct default value");
+	});
+
+	testIfRealDocument("can use onEmit symbol with event", function(assert) {
+		var done = assert.async(2);
+		var button = document.createElement("button");
+		button.value = 5;
+
+		var ta = this.fixture;
+		ta.appendChild(button);
+
+		var obs = new AttributeObservable(button, "value", {}, "click");
+		
+		// Listen to emitted values
+		obs[canSymbol.for('can.onEmit')](function (val) {
+			assert.equal(val, 5);
+			done();
+		});
+
+		// Dispatch two click's
+		domEvents.dispatch(button, "click");
+		domEvents.dispatch(button, "click");
 	});
 });
