@@ -191,8 +191,8 @@ testHelpers.makeTests("AttributeObservable", function(
 		var ta = this.fixture;
 		ta.appendChild(button);
 
-		var obs = new AttributeObservable(button, "value", {}, "click");
-		
+		var obs = new AttributeObservable(button, "value", "click");
+
 		// Listen to emitted values
 		obs[canSymbol.for('can.onEmit')](function (val) {
 			assert.equal(val, 5);

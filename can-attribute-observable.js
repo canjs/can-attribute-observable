@@ -46,11 +46,15 @@ function canUtilREL () {
 }
 
 function AttributeObservable(el, prop, bindingData, event) {
+	if(typeof bindingData === "string") {
+		event = bindingData;
+		bindingData = undefined;
+	}
+
 	this.el = el;
 	this.bound = false;
-	this.bindingData = bindingData;
 	this.prop = isMultipleSelect(el, prop) ? "values" : prop;
-	this.event = event || getEventName(el, prop, bindingData);
+	this.event = event || getEventName(el, prop);
 	this.handler = this.handler.bind(this);
 
 	// If we have an event
