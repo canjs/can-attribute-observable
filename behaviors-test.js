@@ -148,4 +148,20 @@ testHelpers.makeTests("AttributeObservable - behaviors", function(
 		var method = obs.get();
 		method();
 	});
+
+	testIfRealDocument("setting .value on a textarea to undefined or null makes value empty string (28)", function(assert){
+		var textarea = document.createElement("textarea");
+
+		var ta = this.fixture;
+		ta.appendChild(textarea);
+
+		var obs = new AttributeObservable(textarea, "value");
+		obs.set('something');
+		assert.equal(obs.get(), "something", "correct string value");
+
+		obs.set(null);
+		assert.equal(obs.get(), "", "null handled correctly");
+		obs.set(undefined);
+		assert.equal(obs.get(), "", "undefined handled correctly");
+	});
 });
