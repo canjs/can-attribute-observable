@@ -1,6 +1,6 @@
 {
   "name": "can-attribute-observable",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "Create observables from HTML attributes.",
   "main": "can-attribute-observable",
   "scripts": {
