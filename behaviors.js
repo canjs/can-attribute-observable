@@ -350,7 +350,7 @@ var specialAttributes = {
 		},
 		set: function(value){
 			var nodeName = this.nodeName.toLowerCase();
-			if(nodeName === "input") {
+			if(nodeName === "input" || nodeName === "textarea") {
 				// Do some input types support non string values?
 				value = toString(value);
 			}
