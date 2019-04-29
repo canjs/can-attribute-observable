@@ -2,7 +2,7 @@
 
 var getDocument = require("can-globals/document/document");
 var global = require("can-globals/global/global")();
-var setData = require("can-dom-data");
+var setData = require("can-dom-data-state");
 var domEvents = require("can-dom-events");
 var domMutate = require("can-dom-mutate");
 var domMutateNode = require("can-dom-mutate/node");
@@ -54,7 +54,7 @@ var formElements = {"INPUT": true, "TEXTAREA": true, "SELECT": true, "BUTTON": t
 		};
 	},
 	setupMO = function(el, callback){
-		var attrMO = setData.get(el, "attrMO");
+		var attrMO = setData.get.call(el, "attrMO");
 		if(!attrMO) {
 			var onMutation = function(){
 				callback.call(el);
@@ -66,10 +66,10 @@ var formElements = {"INPUT": true, "TEXTAREA": true, "SELECT": true, "BUTTON": t
 					childList: true,
 					subtree: true
 				});
-				setData.set(el, "attrMO", observer);
+				setData.set.call(el, "attrMO", observer);
 			} else {
-				setData.set(el, "attrMO", true);
-				setData.set(el, "canBindingCallback", {onMutation: onMutation});
+				setData.set.call(el, "attrMO", true);
+				setData.set.call(el, "canBindingCallback", {onMutation: onMutation});
 			}
 		}
 	},
@@ -128,17 +128,17 @@ var formElements = {"INPUT": true, "TEXTAREA": true, "SELECT": true, "BUTTON": t
 	// Create a handler, only once, that will set the child options any time
 	// the select's value changes.
 	setChildOptionsOnChange = function(select, aEL){
-		var handler = setData.get(select, "attrSetChildOptions");
+		var handler = setData.get.call(select, "attrSetChildOptions");
 		if(handler) {
 			return Function.prototype;
 		}
 		handler = function(){
 			setChildOptions(select, select.value);
 		};
-		setData.set(select, "attrSetChildOptions", handler);
+		setData.set.call(select, "attrSetChildOptions", handler);
 		aEL.call(select, "change", handler);
 		return function(rEL){
-			setData.clean(select, "attrSetChildOptions");
+			setData.clean.call(select, "attrSetChildOptions");
 			rEL.call(select, "change", handler);
 		};
 	},
@@ -291,7 +291,7 @@ var specialAttributes = {
 		},
 		set: function(val){
 			val = !!val;
-			setData.set(this, "lastSetValue", val);
+			setData.set.call(this, "lastSetValue", val);
 			this.selected = val;
 		},
 		addEventListener: function(eventName, handler, aEL){
@@ -300,7 +300,7 @@ var specialAttributes = {
 			var lastVal = option.selected;
 			var localHandler = function(changeEvent){
 				var curVal = option.selected;
-				lastVal = setData.get(option, "lastSetValue") || lastVal;
+				lastVal = setData.get.call(option, "lastSetValue") || lastVal;
 				if(curVal !== lastVal) {
 					lastVal = curVal;
 
@@ -361,7 +361,7 @@ var specialAttributes = {
 				this.defaultValue = value;
 			}
 			if(nodeName === "select") {
-				setData.set(this, "attrValueLastVal", value);
+				setData.set.call(this, "attrValueLastVal", value);
 				//If it's null then special case
 				setChildOptions(this, value === null ? value : this.value);
 
@@ -377,7 +377,7 @@ var specialAttributes = {
 
 				// MO handler is only set up **ONCE**
 				setupMO(this, function(){
-					var value = setData.get(this, "attrValueLastVal");
+					var value = setData.get.call(this, "attrValueLastVal");
 					attr.set(this, "value", value);
 					domEvents.dispatch(this, "change");
 				});
@@ -398,21 +398,21 @@ var specialAttributes = {
 			markSelectedOptions(this, values);
 
 			// store new DOM state
-			setData.set(this, "stickyValues", attr.get(this,"values") );
+			setData.set.call(this, "stickyValues", attr.get(this,"values") );
 
 			// MO handler is only set up **ONCE**
 			// TODO: should this be moved into addEventListener?
 			setupMO(this, function(){
 
 				// Get the previous sticky state
-				var previousValues = setData.get(this,
+				var previousValues = setData.get.call(this,
 					"stickyValues");
 
 				// Set DOM to previous sticky state
 				attr.set(this, "values", previousValues);
 
 				// Get the new result after trying to maintain the sticky state
-				var currentValues = setData.get(this,
+				var currentValues = setData.get.call(this,
 					"stickyValues");
 
 				// If there are changes, trigger a `values` event.
