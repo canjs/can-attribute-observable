@@ -104,7 +104,8 @@ testHelpers.makeTests("AttributeObservable - behaviors", function(
 		assert.deepEqual(dispatchedValues,["red"], "dispatched the right events");
 	});
 
-	testIfRealDocument("focused set at end of queues (#16)", 5, function(assert) {
+	testIfRealDocument("focused set at end of queues (#16)", function(assert) {
+		assert.expect(5);
 		var input = document.createElement("input");
 		var otherInput = document.createElement("input");
 
