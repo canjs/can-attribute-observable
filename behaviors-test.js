@@ -67,7 +67,7 @@ testHelpers.makeTests("AttributeObservable - behaviors", function(
 		behaviors.rules.clear();
 	});
 
-	testIfRealDocument("select changes value", function(){
+	testIfRealDocument("select changes value", function(assert){
 		var html = "<select>" +
 			"<option value='red'>Red</option>" +
 			"<option value='green'>Green</option>" +
@@ -101,10 +101,11 @@ testHelpers.makeTests("AttributeObservable - behaviors", function(
 		// It should have dispatched green and red
 		// red is most important.  There is probably a bug
 		// in that it is not dispatching red.
-		QUnit.deepEqual(dispatchedValues,["red"], "dispatched the right events");
+		assert.deepEqual(dispatchedValues,["red"], "dispatched the right events");
 	});
 
-	testIfRealDocument("focused set at end of queues (#16)", 5, function(assert) {
+	testIfRealDocument("focused set at end of queues (#16)", function(assert) {
+		assert.expect(5);
 		var input = document.createElement("input");
 		var otherInput = document.createElement("input");
 
@@ -132,7 +133,7 @@ testHelpers.makeTests("AttributeObservable - behaviors", function(
 
 		assert.equal(input, document.activeElement, "focused");
 
-		QUnit.deepEqual(eventValues,[true], "became focused once");
+		assert.deepEqual(eventValues,[true], "became focused once");
 	});
 
 	testIfRealDocument("bindings for functions are not bound to the correct this (#493)", function(assert) {

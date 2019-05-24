@@ -20,7 +20,7 @@ testHelpers.makeTests("AttributeObservable", function(
 		var obs = new AttributeObservable(input, "value", {});
 		assert.equal(canReflect.getValue(obs), "", "correct default value");
 
-		// override the internal handler so it calls `QUnit.done` itself,
+		// override the internal handler so it calls `done` itself,
 		// if AttributeObservable does not teardown the handler correctly
 		// this test will fail with "Too many calls to the `assert.async` callback"
 		var handler = obs.handler;
