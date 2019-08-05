@@ -37,7 +37,7 @@
     "can-dom-mutate": "^1.0.3",
     "can-event-dom-radiochange": "^2.1.0",
     "can-globals": "^1.0.1",
-    "can-observation": "^4.0.1",
+    "can-observation": "^4.2.0",
     "can-observation-recorder": "^1.0.2",
     "can-queues": "^1.0.1",
     "can-reflect": "^1.13.3",
