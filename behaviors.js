@@ -10,6 +10,14 @@ var getMutationObserver = require("can-globals/mutation-observer/mutation-observ
 var diff = require("can-diff/list/list");
 var queues = require("can-queues");
 
+var xmlnsAttrNamespaceURI = "http://www.w3.org/2000/xmlns/";
+var xlinkHrefAttrNamespaceURI =  "http://www.w3.org/1999/xlink";
+var attrsNamespacesURI = {
+	'xmlns': xmlnsAttrNamespaceURI,
+	'xlink:href': xlinkHrefAttrNamespaceURI
+};
+
+
 var formElements = {"INPUT": true, "TEXTAREA": true, "SELECT": true, "BUTTON": true},
 	// Used to convert values to strings.
 	toString = function(value){
@@ -496,7 +504,11 @@ var attr = {
 				return this.getAttribute(attrName);
 			},
 			set: function(val) {
-				domMutateNode.setAttribute.call(this, attrName, val);
+				if (attrsNamespacesURI[attrName]) {
+					domMutateNode.setAttributeNS.call(this, attrsNamespacesURI[attrName], attrName, val);
+				} else {
+					domMutateNode.setAttribute.call(this, attrName, val);
+				}
 			}
 		};
 	},
