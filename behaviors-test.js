@@ -165,4 +165,31 @@ testHelpers.makeTests("AttributeObservable - behaviors", function(
 		obs.set(undefined);
 		assert.equal(obs.get(), "", "undefined handled correctly");
 	});
+
+	testIfRealDocument("should use setAttributeNS instead of setAttribute for namespaced-attributes", function(assert) {
+		var svgNamespaceURI =  "http://www.w3.org/2000/svg";
+		var xlinkHrefAttrNamespaceURI =  "http://www.w3.org/1999/xlink";
+		var xlinkHrefAttr = "xlink:href";
+		var origValue = "icons.svg#logo";
+		var newValue = "icons.svg#pointDown";
+
+		var svg = document.createElementNS(svgNamespaceURI, "svg");
+		var svgUse = document.createElementNS(svgNamespaceURI, "use");
+		svgUse.setAttributeNS(xlinkHrefAttrNamespaceURI, xlinkHrefAttr, origValue);
+		svg.appendChild(svgUse);
+
+		var ta = this.fixture;
+		ta.appendChild(svg);
+
+		var obs = new AttributeObservable(svgUse, xlinkHrefAttr);
+
+		// test get
+		var origValueNS = obs.get(xlinkHrefAttr);
+		assert.equal(origValueNS, origValue, "get should match origValue");
+
+		// test set
+		obs.set(newValue);
+		assert.equal(svgUse.getAttributeNS(xlinkHrefAttrNamespaceURI, "href"), newValue, "getAttributeNS() should match newValue");
+		assert.equal(svgUse.getAttribute(xlinkHrefAttr), newValue, "getAttribute() should match newValue");
+	});
 });
