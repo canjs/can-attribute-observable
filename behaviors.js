@@ -244,8 +244,8 @@ var specialAttributes = {
 			}
 			if (cur !== val) {
 				if (!docEl.contains(element)) {
-					var insertionDisposal = domMutate.onNodeInsertion(element, function () {
-						insertionDisposal();
+					var connectionDisposal = domMutate.onNodeConnected(element, function () {
+						connectionDisposal();
 						focusTask();
 					});
 				} else {
@@ -377,8 +377,8 @@ var specialAttributes = {
 				var docEl = this.ownerDocument.documentElement;
 				if(!docEl.contains(this)) {
 					var select = this;
-					var insertionDisposal = domMutate.onNodeInsertion(select, function () {
-						insertionDisposal();
+					var connectionDisposal = domMutate.onNodeConnected(select, function () {
+						connectionDisposal();
 						setChildOptions(select, value === null ? value : select.value);
 					});
 				}
