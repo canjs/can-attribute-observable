@@ -3,6 +3,7 @@
 var getDocument = require("can-globals/document/document");
 var global = require("can-globals/global/global")();
 var setData = require("can-dom-data");
+var dev = require("can-log/dev/dev");
 var domEvents = require("can-dom-events");
 var domMutate = require("can-dom-mutate");
 var domMutateNode = require("can-dom-mutate/node");
@@ -357,6 +358,7 @@ var specialAttributes = {
 			return value;
 		},
 		set: function(value){
+			var providedValue = value;
 			var nodeName = this.nodeName.toLowerCase();
 			if(nodeName === "input" || nodeName === "textarea") {
 				// Do some input types support non string values?
@@ -390,6 +392,16 @@ var specialAttributes = {
 					domEvents.dispatch(this, "change");
 				});
 			}
+
+			// Warnings area
+			//!steal-remove-start
+			if(process.env.NODE_ENV !== "production") {
+				var settingADateInputToADate = nodeName === "input" && this.type === "date" && (providedValue instanceof Date);
+				if(settingADateInputToADate) {
+					dev.warn("Binding a Date to the \"value\" property on an <input type=\"date\"> will not work as expected. Use valueAsDate:bind instead. See https://canjs.com/doc/guides/forms.html#Dateinput for more information.");
+				}
+			}
+			//!steal-remove-end
 		},
 		test: function(){
 			return formElements[this.nodeName];

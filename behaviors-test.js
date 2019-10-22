@@ -4,6 +4,7 @@ var canReflect = require("can-reflect");
 var AttributeObservable = require("can-attribute-observable");
 var domEvents = require("can-dom-events");
 var queues = require("can-queues");
+var dev = require("can-test-helpers").dev;
 
 var mock = function(obj, fnName) {
 	var origFn = obj[fnName];
@@ -191,5 +192,19 @@ testHelpers.makeTests("AttributeObservable - behaviors", function(
 		obs.set(newValue);
 		assert.equal(svgUse.getAttributeNS(xlinkHrefAttrNamespaceURI, "href"), newValue, "getAttributeNS() should match newValue");
 		assert.equal(svgUse.getAttribute(xlinkHrefAttr), newValue, "getAttribute() should match newValue");
+	});
+
+	dev.devOnlyTest("Warns when setting [type=date] value to a Date", function(assert) {
+		var input = document.createElement("input");
+		input.type = "date";
+
+		var ta = this.fixture;
+		ta.appendChild(input);
+
+		var obs = new AttributeObservable(input, "value");
+
+		var undo = dev.willWarn(/valueAsDate/);
+		obs.set(new Date());
+		assert.equal(undo(), 1, "Warned to use valueAsDate instead");
 	});
 });
