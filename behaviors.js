@@ -398,7 +398,7 @@ var specialAttributes = {
 			if(process.env.NODE_ENV !== "production") {
 				var settingADateInputToADate = nodeName === "input" && this.type === "date" && (providedValue instanceof Date);
 				if(settingADateInputToADate) {
-					dev.warn("Setting the 'value' property on an <input type=\"date\">. Use 'valueAsDate' instead.");
+					dev.warn("Binding a Date to the \"value\" property on an <input type=\"date\"> will not work as expected. Use valueAsDate:bind instead. See https://canjs.com/doc/guides/forms.html#Dateinput for more information.");
 				}
 			}
 			//!steal-remove-end
