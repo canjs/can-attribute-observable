@@ -22,6 +22,7 @@
     "url": "http://bitovi.com"
   },
   "devDependencies": {
+    "can-test-helpers": "^1.1.4",
     "can-vdom": "^4.0.1",
     "detect-cyclic-packages": "^1.1.1",
     "jshint": "^2.9.5",
@@ -37,6 +38,7 @@
     "can-dom-mutate": "^2.0.0",
     "can-event-dom-radiochange": "^2.1.0",
     "can-globals": "^1.0.1",
+    "can-log": "^1.0.2",
     "can-observation": "^4.0.1",
     "can-observation-recorder": "^1.0.2",
     "can-queues": "^1.0.1",
