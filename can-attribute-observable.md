@@ -44,11 +44,10 @@ If the value is focused or not:
 :focus { background-color: yellow; }
 </style>
 <script type="module">
-import {Component} from "can";
+import { StacheElement } from "can";
 
-Component.extend({
-	tag: "my-demo",
-	view: `
+class MyDemo extends StacheElement {
+	static view = `
 		<input
 			on:input:value:bind="this.cardNumber"
 			placeholder="Card Number (9 digits)"/>
@@ -60,9 +59,10 @@ Component.extend({
 		<button
 			focused:from="this.payFocus"
 			on:blur="this.dispatch('payBlur')">Pay</button>
-	`,
-	ViewModel: {
-		cardNumber: "string",
+	`;
+	static props = {
+		cardNumber: String,
+		cvcNumber: String,
 		cvcFocus: {
 			value({listenTo, resolve}) {
 				listenTo("cardNumber", (ev, newVal) => {
@@ -77,7 +77,6 @@ Component.extend({
 				});
 			}
 		},
-		cvcNumber: "string",
 		payFocus: {
 			value({listenTo, resolve}) {
 				listenTo("cvcNumber", (ev, newVal) => {
@@ -91,9 +90,10 @@ Component.extend({
 					resolve(false);
 				});
 			}
-		}
-	}
-});
+		}		
+	};
+}
+customElements.define('my-demo', MyDemo);
 </script>
 ```
 @codepen
@@ -108,12 +108,10 @@ Get the checked `<options>` as an array:
 :focus { background-color: yellow; }
 </style>
 <script type="module">
-import {Component} from "can";
+import { StacheElement } from "can";
 
-Component.extend({
-	tag: "pizza-toppings-picker",
-
-	view: `
+class PizzaToppingsPicker extends StacheElement {
+	static view = `
 		<label>
 			What pizza toppings do you like?
 			<select values:bind="this.toppings" multiple>
@@ -135,13 +133,17 @@ Component.extend({
 			{{# for( topping of this.toppings) }}
 				{{ topping }}
 			{{/ for }}
-		</p>
-	`,
-
-	ViewModel: {
-		toppings: {default: () => []}
-	}
-});
+		</p>	
+	`;
+	static props = {
+		toppings: { 
+			get default() {
+				return [];
+			}
+		}
+	};
+}
+customElements.define('pizza-toppings-picker', PizzaToppingsPicker);
 </script>
 ```
 @codepen
